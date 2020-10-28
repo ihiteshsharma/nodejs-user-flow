@@ -1,6 +1,6 @@
 ### Basic User Authentication Flow in Nodejs
 
-# Work in Progress
+# REPO STATUS: WORK IN PROGRESS
 
 Feature List:
 
