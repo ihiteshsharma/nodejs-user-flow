@@ -1,4 +1,3 @@
-require('rootpath')();
 const fs = require('fs');
 const path = require('path');
 
@@ -7,7 +6,7 @@ var d = new Date().toISOString();
 
 var serverLogStream = fs.createWriteStream(serverLogPath, {flags:'a'});
 
-function logToFile(type, description){
+logToFile = (type, description) => {
     serverLogStream.write(d + " --- " + type + " --- " + description + " \r\n");
 }
 

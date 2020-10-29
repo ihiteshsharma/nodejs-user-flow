@@ -1,16 +1,16 @@
-function sendResponse(req, res, next, status, description){
+function sendResponse(req, res, next, status, data){
     switch(status){
         case 200:
-            return res.status(status).json({ message: 'Success', description: description });
+            return res.status(status).json({ message: 'Success', data: data });
         case 400:
-            return res.status(status).json({ message: 'Bad Request', description: description });
+            return res.status(status).json({ message: 'Bad Request', data: data });
         case 404:
-            return res.status(status).json({ message: 'Not found', description: 'Could not find requested resource'});
+            return res.status(status).json({ message: 'Not found', data: 'Could not find requested resource'});
         default:
             break;
     }
     //default to 500
-    return res.status(500).json({ message: 'Internal Server Error', description: 'An error occured'});
+    return res.status(500).json({ message: 'Internal Server Error', data: 'An error occured'});
 }
 
 
