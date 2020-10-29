@@ -1,3 +1,4 @@
+require('rootpath')();
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -6,7 +7,9 @@ const morgan = require('morgan');
 const fs = require('fs');
 const path = require('path');
 const uuid = require('uuid');
-const sendResponse = require('./_helpers/response.helper');
+const sendResponse = require('_helpers/response.helper');
+
+const userService = require('users/users.service');
 
 //writestream for writing logs in a file
 var accessLogStream = fs.createWriteStream(path.join(__dirname, 'requests.log'), { flags: 'a' });

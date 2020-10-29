@@ -1,11 +1,13 @@
+require('rootpath')();
 const fs = require('fs');
 const path = require('path');
 
-const filePath = path.join(__dirname, 'server.log')
+const logpath = path.join(__dirname, "..", "server.log")
 var d = new Date().toISOString();
+var stream = fs.createWriteStream(logpath, {flags:'a'});
 
 function logToFile(type, description){
-    fs.appendFile(filePath, d + " --- " + type + " --- " + description);
+    stream.write(d + " --- " + type + " --- " + description + " \r\n");
 }
 
 module.exports = logToFile;
