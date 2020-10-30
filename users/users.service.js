@@ -2,6 +2,7 @@ const dbManager = require('../_helpers/db.config');
 const logger = require('../_helpers/logger.helper');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ObjectID = require('mongodb').ObjectID;
 
 const SECRET_KEY = process.env.SECRET_KEY;
 
@@ -28,20 +29,24 @@ dbManager.start()
 authenticate = async ({ username, password }) => {
     const user = await Users.findOne({ username });
     if(user && bcrypt.compareSync(password, user.hash)){
-        const token = jwt.sign({ sub: user.id }, SECRET_KEY, { expiresIn: '3d' });
+        console.log(user._id);
+        const token = jwt.sign({ sub: user._id }, SECRET_KEY, { expiresIn: '3d' });
         return {
-            ...user,
+            firstName: user.firstName,
+            lastName: user.lastName,
             token
         }
     }
 }
 
 getAll = async () => {
-    return await Users.find();
+    let users = await Users.find({});
+    console.log(users);
+    return users;
 }
 
 getById = async (id) => {
-    return await Users.findById(id).select('-_id -__v');
+    return await Users.findOne({ '_id': new ObjectID(id)});
 }
 
 createUser = async (user) => {
@@ -52,16 +57,53 @@ createUser = async (user) => {
     if(user.password){
         user.hash = bcrypt.hashSync(user.password, 10);
     }
-
-    Users.insertOne(user, (err, result) => {
+    let userToStore = {
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        hash: user.hash
+    }
+    Users.insertOne(userToStore, (err, result) => {
         if(err) { throw err }
         logger("INFO", "New user created with username : " + user.username);
     });
+}
+
+update = async (id, updatedUser) => {
+    let user = await Users.findOne({'_id': new ObjectID(id)});
+
+    if(!user){ throw "User not found!"; }
+
+    if(user.username !== updatedUser.username && await Users.findOne({ username: updatedUser.username })){
+        throw 'Cannot update Username as its already taken';
+    }
+
+    if(updatedUser.password){
+        updatedUser.hash = bcrypt.hashSync(updatedUser.password,10);
+    }
+
+    Users.updateOne({ '_id': new ObjectID(id) }, updatedUser, (err, result) => {
+        if(err) throw err
+        console.log(result);
+        logger("INFO", "Updated User with ID: " +id);
+    });
+}
+
+_delete = async (id) => {
+    Users.deleteOne({ '_id': new ObjectID(id) }, (err, result) => {
+        if(err) throw err
+        if(result){
+            console.log("User with ID: " + id +" deleted successfully");
+            logger("INFO", "User with ID " + id + " deleted successfully");
+        }
+    })
 }
 
 module.exports = {
     getAll,
     getById,
     authenticate,
-    createUser
+    createUser,
+    update,
+    delete: _delete
 }

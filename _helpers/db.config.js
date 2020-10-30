@@ -26,7 +26,7 @@ class DBManager {
         this.db = null;
     }
     async start(){
-        this.connection = await new MongoClient.connect(this.uri, { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
+        this.connection = await new MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
         this.db = this.connection.db(DBConfig.db_name);
     }
     stop(){

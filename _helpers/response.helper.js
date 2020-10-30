@@ -4,6 +4,8 @@ function sendResponse(req, res, next, status, data){
             return res.status(status).json({ message: 'Success', data: data });
         case 400:
             return res.status(status).json({ message: 'Bad Request', data: data });
+        case 401:
+            return res.status(status).json({ message: 'Unauthorized', data: {} });
         case 404:
             return res.status(status).json({ message: 'Not found', data: 'Could not find requested resource'});
         default:
