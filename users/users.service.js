@@ -29,7 +29,6 @@ dbManager.start()
 authenticate = async ({ username, password }) => {
     const user = await Users.findOne({ username });
     if(user && bcrypt.compareSync(password, user.hash)){
-        console.log(user._id);
         const token = jwt.sign({ sub: user._id }, SECRET_KEY, { expiresIn: '3d' });
         return {
             firstName: user.firstName,
@@ -40,9 +39,7 @@ authenticate = async ({ username, password }) => {
 }
 
 getAll = async () => {
-    let users = await Users.find({});
-    console.log(users);
-    return users;
+    return await Users.find({}, { '_id': 0}).toArray();
 }
 
 getById = async (id) => {
