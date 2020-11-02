@@ -79,7 +79,7 @@ update = async (id, updatedUser) => {
         updatedUser.hash = bcrypt.hashSync(updatedUser.password,10);
     }
 
-    Users.updateOne({ '_id': new ObjectID(id) }, updatedUser, (err, result) => {
+    await Users.updateOne({ '_id': new ObjectID(id) }, updatedUser, (err, result) => {
         if(err) throw err
         console.log(result);
         logger("INFO", "Updated User with ID: " +id);
@@ -87,7 +87,7 @@ update = async (id, updatedUser) => {
 }
 
 _delete = async (id) => {
-    Users.deleteOne({ '_id': new ObjectID(id) }, (err, result) => {
+    await Users.deleteOne({ '_id': new ObjectID(id) }, (err, result) => {
         if(err) throw err
         if(result){
             console.log("User with ID: " + id +" deleted successfully");
