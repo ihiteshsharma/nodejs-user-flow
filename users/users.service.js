@@ -15,6 +15,7 @@ dbManager.start()
         if(err){
             logger("ERROR", err.message);
         }
+        collection.createIndex({ "_id": 1 });
         Users = collection;
         logger("INFO", "Using collection : Users" );
     });
@@ -47,20 +48,29 @@ getById = async (id) => {
 }
 
 createUser = async (user) => {
-    if(await Users.findOne({ username: user.username })){
-        throw 'Username "' + user.username + '" exists';
+    if(await Users.findOne({ 
+        "$or": [
+            {username: user.username},
+            {email: user.email}
+        ]})) {
+        throw 'User already exists';
     }
     
     if(user.password){
         user.hash = bcrypt.hashSync(user.password, 10);
+        delete user.password;
     }
-    let userToStore = {
-        username: user.username,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        hash: user.hash
+    
+    const regexEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if(!regexEmail.test(user.email)){
+        throw { "error": "please enter a valid email address" }
     }
-    Users.insertOne(userToStore, (err, result) => {
+
+    if(user.phone_number.length > 10){
+        throw { "error": "phone number length cannot exceed 10 characters" }
+    }
+    
+    Users.insertOne({...user, createdAt: new Date().toISOString()}, (err, result) => {
         if(err) { throw err }
         logger("INFO", "New user created with username : " + user.username);
     });
@@ -68,21 +78,25 @@ createUser = async (user) => {
 
 update = async (id, updatedUser) => {
     let user = await Users.findOne({'_id': new ObjectID(id)});
-
+    console.log(user);
     if(!user){ throw "User not found!"; }
 
     if(user.username !== updatedUser.username && await Users.findOne({ username: updatedUser.username })){
         throw 'Cannot update Username as its already taken';
     }
 
+
     if(updatedUser.password){
         updatedUser.hash = bcrypt.hashSync(updatedUser.password,10);
+        delete updatedUser.password
     }
+    updatedUser.updatedAt = new Date().toISOString();
+    Object.assign(user,updatedUser);
+    console.log(user);
 
-    await Users.updateOne({ '_id': new ObjectID(id) }, updatedUser, (err, result) => {
+    await Users.updateOne({ '_id': new ObjectID(id) }, { $set: user }, (err, result) => {
         if(err) throw err
-        console.log(result);
-        logger("INFO", "Updated User with ID: " +id);
+        if(result) logger("INFO", "Updated User with ID: " +id);
     });
 }
 

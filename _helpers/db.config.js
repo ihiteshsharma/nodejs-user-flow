@@ -8,8 +8,8 @@ const { MongoClient } = require('mongodb');
 
 const DBConfig = {
     db_mode: process.env.DATABASE_MODE,
-    // server_ip: process.env.DATABASE_IP,
-    // server_port: process.env.DATABASE_PORT,
+    server_ip: process.env.DATABASE_IP,
+    server_port: process.env.DATABASE_PORT,
     db_clusterURL: process.env.DATABASE_URL,
     db_name: process.env.DATABASE_NAME,
     db_username: process.env.DATABASE_USER,

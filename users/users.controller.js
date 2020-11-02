@@ -27,7 +27,7 @@ getByIdController = (req,res,next) => {
 
 update = (req,res,next) => {
     userService.update(req.params.id, req.body)
-        .then( user => user ? sendResponse(req,res,next,200, user) : sendResponse(req,res,next,404, {}))
+        .then( () => sendResponse(req,res,next,200, {}))
         .catch(err => sendResponse(req,res,next,400,err));
 }
 
@@ -55,7 +55,7 @@ getCurrent = (req,res,next) => {
 
 router.post('/authenticate', authenticateUser);
 router.post('/signup', signup);
-router.get('/getall', getAll);
+router.get('/', getAll);
 router.get('/current', getCurrent);
 router.get('/:id', getByIdController);
 router.put('/:id', update);
