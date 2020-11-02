@@ -17,26 +17,10 @@ signup = (req, res, next) => {
     .catch(err => sendResponse(req,res,next,400,err));
 };
 
-getById = (req,res,next) => {
-    console.log("In getbyid route: NExt up params");
-    console.log(req.params);
+
+getByIdController = (req,res,next) => {
     userService.getById(req.params.id)
         .then( user => user ? sendResponse(req,res,next,200,user) : sendResponse(req,res,next,404,{}))
-        .catch(err => sendResponse(req,res,next,400,err));
-
-}
-
-getAll = (req,res,next) => {
-    console.log("In getall route");
-    userService.getAll()
-    .then( user => user ? sendResponse(req,res,next,200, user) : sendResponse(req,res,next,404, {}))
-    .catch(err => sendResponse(req,res,next,400,err));
-
-}
-
-getCurrent = (req,res,next) => {
-    userService.getById(req.user.sub)
-        .then( user => user ? sendResponse(req,res,next,200,user) : sendResponse(req,res,next,404, {}))
         .catch(err => sendResponse(req,res,next,400,err));
 
 }
@@ -54,13 +38,26 @@ _delete = (req,res,next) => {
 
 }
 
+getAll = (req,res,next) => {
+    userService.getAll()
+    .then( user => user ? sendResponse(req,res,next,200, user) : sendResponse(req,res,next,404, {}))
+    .catch(err => sendResponse(req,res,next,400,err));
+
+}
+
+getCurrent = (req,res,next) => {
+    userService.getById(req.user.sub)
+        .then( user => user ? sendResponse(req,res,next,200,user) : sendResponse(req,res,next,404, {}))
+        .catch(err => sendResponse(req,res,next,400,err));
+
+}
 
 
 router.post('/authenticate', authenticateUser);
 router.post('/signup', signup);
 router.get('/getall', getAll);
-router.get('/:id', getById);
 router.get('/current', getCurrent);
+router.get('/:id', getByIdController);
 router.put('/:id', update);
 router.delete('/:id', _delete);
 
