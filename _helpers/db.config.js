@@ -7,6 +7,7 @@ const { MongoClient } = require('mongodb');
 // uncomment the below two lines if connecting to a separate db server
 
 const DBConfig = {
+    db_mode: process.env.DATABASE_MODE,
     // server_ip: process.env.DATABASE_IP,
     // server_port: process.env.DATABASE_PORT,
     db_clusterURL: process.env.DATABASE_URL,
@@ -15,7 +16,8 @@ const DBConfig = {
     db_userpassword: process.env.DATABASE_PASSWORD
 };
 
-const uri = "mongodb+srv://"+DBConfig.db_username+":"+DBConfig.db_userpassword+"@"+DBConfig.db_clusterURL+"/"+DBConfig.db_name+"?";
+
+const uri = (DBConfig.db_mode === 'remote') ? "mongodb+srv://"+DBConfig.db_username+":"+DBConfig.db_userpassword+"@"+DBConfig.db_clusterURL+"/"+DBConfig.db_name+"?" : "mongodb://"+DBConfig.server_ip+":"+DBConfig.server_port+"/"+DBConfig.db_name+"?" ;
 
 const COLLECTIONS = ['users']
 
