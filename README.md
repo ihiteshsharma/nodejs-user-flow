@@ -1,9 +1,14 @@
 ### Basic User Authentication Flow in Nodejs
 
-# REPO STATUS: WORK IN PROGRESS
+To use this repo, you will need following env variables:
 
-Feature List:
-
-1. Uses MongoDB native driver for nodejs.
-2. Uses JWT
-3. Login & Signup flow
+SECRET_KEY : This is the key used to sign the jwt
+SERVER_MODE : production or development
+PORT : Server port to listen to
+DATABASE_MODE : local or remote depending where you wanna connect to
+DATABASE_URL : this can be the MongoDB Atlas Cluster URL
+DATABASE_IP : In case you are using a hosted db server, use this field to set its static IP
+DATABASE_PORT : Port db is running on
+DATABASE_NAME : db to use
+DATABASE_USER : Ensure this user has read and write privileges
+DATABASE_PASSWORD
