@@ -1,5 +1,7 @@
 \/memory
 
+uploads/
+
 # Logs
 logs
 *.log

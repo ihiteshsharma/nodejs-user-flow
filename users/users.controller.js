@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const userService = require('./users.service');
 const sendResponse = require('../_helpers/response.helper');
+const fileUploadService = require('../_helpers/fileupload.helper');
+
 
 authenticateUser = (req, res, next) => {
     userService.authenticate(req.body)
@@ -52,7 +54,7 @@ getCurrent = (req,res,next) => {
 
 }
 
-
+router.use(fileUploadService);
 router.post('/authenticate', authenticateUser);
 router.post('/signup', signup);
 router.get('/', getAll);
