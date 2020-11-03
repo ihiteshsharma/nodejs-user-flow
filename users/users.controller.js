@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const userService = require('./users.service');
 const sendResponse = require('../_helpers/response.helper');
-const fileUploadService = require('../_helpers/fileupload.helper');
 
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
+const PHOTOS_MAX_LIMIT = 5;
 
 authenticateUser = (req, res, next) => {
     userService.authenticate(req.body)
@@ -54,7 +56,42 @@ getCurrent = (req,res,next) => {
 
 }
 
-router.use(fileUploadService);
+uploadProfilePicture = (req,res,next) => {
+    //get the profile picture
+    let file = req.file;
+    
+    if(file.mimetype !== "image/jpeg" && file.mimetype !== "image/png"){
+        sendResponse(req,res,next,415, {"error": "Please select only jpeg or png files"})
+    }
+    
+    //remove redundant fields; can be retained depending on use case
+    delete file.fieldname;
+    delete file.encoding;
+    delete file.destination;
+
+    userService.update(req.user.sub, { profilePicture: file })
+        .then( () => sendResponse(req,res,next,200, {}))
+        .catch(err => sendResponse(req,res,next,400,err));
+}
+
+uploadMultiplePictures = (req,res,next) => {
+    let files = req.files
+    files.map( file => {
+        if(file.mimetype !== "image/jpeg" && file.mimetype !== "image/png"){
+            sendResponse(req,res,next,415, {"error": "Please select only jpeg or png files"})
+        }
+        delete file.fieldname;
+        delete file.encoding;
+        delete file.destination;
+    });
+
+    userService.update(req.user.sub, { photos: files })
+        .then( () => sendResponse(req,res,next,200, {}))
+        .catch(err => sendResponse(req,res,next,400,err));
+}
+
+router.post('/profile/upload', upload.single('profile'), uploadProfilePicture);
+router.post('/photos/upload', upload.array('photos', 5), uploadMultiplePictures);
 router.post('/authenticate', authenticateUser);
 router.post('/signup', signup);
 router.get('/', getAll);

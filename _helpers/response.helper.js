@@ -14,6 +14,10 @@ function sendResponse(req, res, next, status, data){
         case 404:
             logger("ERR","Not found 404 : " + JSON.stringify(data));            
             return res.status(status).send({ message: 'Not found', data: 'Could not find requested resource'});
+        case 415:
+            logger("ERR","Unsupported Media Type : " + JSON.stringify(data));            
+            return res.status(status).send({ message: 'Unsupported Media Type', data: {} });
+            
         default:
             break;
     }
