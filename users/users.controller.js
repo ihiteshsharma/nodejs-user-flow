@@ -5,9 +5,10 @@ const sendResponse = require('../_helpers/response.helper');
 
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
-const PHOTOS_MAX_LIMIT = 5;
+const PHOTOS_UPLOAD_MAX_LIMIT = 5;
 
 authenticateUser = (req, res, next) => {
+    console.log(req.body);
     userService.authenticate(req.body)
     .then( user => user ? sendResponse(req, res, next, 200, user) : sendResponse(req, res, next, 400, "Incorrect username or password"))
     .catch( err => {
@@ -91,7 +92,7 @@ uploadMultiplePictures = (req,res,next) => {
 }
 
 router.post('/profile/upload', upload.single('profile'), uploadProfilePicture);
-router.post('/photos/upload', upload.array('photos', 5), uploadMultiplePictures);
+router.post('/photos/upload', upload.array('photos', PHOTOS_UPLOAD_MAX_LIMIT), uploadMultiplePictures);
 router.post('/authenticate', authenticateUser);
 router.post('/signup', signup);
 router.get('/', getAll);

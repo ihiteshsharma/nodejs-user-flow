@@ -13,8 +13,8 @@ var accessLogStream = fs.createWriteStream(path.join(__dirname, 'requests.log'),
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(morgan('dev'));
 
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(jwt());
 
